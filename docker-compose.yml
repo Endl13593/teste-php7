@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  # image project
+  php7:
+    build:
+      args:
+        user: eduardo
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    container_name: php7-server
+    ports:
+      - "8087:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - network_private_php7
+
+  # db mysql
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-server-php7
+    ports:
+      - "3307:3306"
+    volumes:
+      - .docker/mysql/dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db_docker
+    networks:
+      - network_private_php7
+
+networks:
+  network_private_php7:
+    driver: bridge
